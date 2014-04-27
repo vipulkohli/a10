@@ -1,0 +1,31 @@
+ function w = LU3315(a,b,c,r)
+n = length(r);
+u(1) = b(1);
+for k=2:n
+l(k) = a(k)/u(k-1);
+u(k) = b(k) - l(k)*c(k-1);
+end;
+%solve Lz = r
+z(1) = r(1);
+for k = 2:n
+z(k) = r(k) - l(k) * z(k-1);
+end;
+w(n) = z(n)/u(n);
+for k=n-1:-1:1
+w(k) = (z(k) - c(k) * w(k+1))/u(k);
+end;
+end;
+c2 = -49.6936950136906;
+c1 = 49.6936950136906;
+r1 = 1.10679718105893;
+r2 = -1.10679718105893;
+x1 = 0; x2 = 1; v0 = 200;
+alpha = 0; beta = 1; lambda = 25;
+icase = 1; n = 2^icase - 1; h = 1/(n+1);
+xe = 0:0.0025:1; ye = 25/pi/pi * sin(pi * xe) + xe;
+for i = 1:n xh(i) = i * h; yh(i) = 25/pi/pi * sin(pi * i * h) + i * h;
+a(i) = -1; b(i) = 2; c(i) = -1;
+r(i) = 25 * sin(pi * i * h); end;
+r(1) = r(1) + alpha/h/h;
+r(n) = r(n) + beta/h/h;
+wh = LU3315(a,b,c,r); xplot = [0 xh 1]; wplot = [alpha wh*h*h beta]; plot(xe, ye, xplot, wplot, '-o')
