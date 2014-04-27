@@ -1,0 +1,26 @@
+function x = TDMAsolver(a,b,c,d)
+%a, b, c are the column vectors for the compressed tridiagonal matrix, d is the right vector
+n = length(d); % n is the number of rows
+ 
+% Modify the first-row coefficients
+c(1) = c(1) / b(1);    % Division by zero risk.
+d(1) = d(1) / b(1);   
+ 
+for i = 2:n-1
+    temp = b(i) - a(i) * c(i-1);
+    c(i) = c(i) / temp;
+    d(i) = (d(i) - a(i) * d(i-1))/temp;
+end;
+ 
+d(n) = (d(n) - a(n) * d(n-1))/( b(n) - a(n) * c(n-1));
+ 
+% Now back substitute.
+x(n) = d(n);
+for i = n-1:-1:1
+    x(i) = d(i) - c(i) * x(i + 1);
+end;
+end;
+alpha = 0; beta = 1; lambda = 25;
+icase = 4; n = 2^icase - 1; h = 1/(n+1); xe = 0:0.0025:1; ye = 25/pi/pi * sin(pi * xe) + xe;
+for i = 1:n xh(i) = i * h; yh(i) = 25/pi/pi * sin(pi * i * h) + i * h; a(i) = -1; b(i) = 2; c(i) = -1; r(i) = h * h * 25 * sin(pi * i * h); end;
+wh = TDMAsolver(a,b,c,r); xplot = [0 xh 1]; wplot = [alpha wh beta]; plot(xe, ye, xplot, wplot, '-o')
